@@ -45,7 +45,6 @@ class DynamixelMotorsBusConfig(MotorsBusConfig):
     motors: dict[str, tuple[int, str]]
     mock: bool = False
 
-
 @MotorsBusConfig.register_subclass("feetech")
 @dataclass
 class FeetechMotorsBusConfig(MotorsBusConfig):
@@ -59,3 +58,18 @@ class RosMotorsBusConfig(MotorsBusConfig):
     topic: str
     motors: dict[str, tuple[int, str]]
     mock: bool = False
+
+@MotorsBusConfig.register_subclass("dds")
+@dataclass
+class DDSMotorsBusConfig(MotorsBusConfig):
+    topic: str
+    group: str
+    motors: dict[str, tuple[int, str]]
+    mock: bool = False
+
+@MotorsBusConfig.register_subclass("dexterous_hand")  
+@dataclass  
+class DexterousHandMotorsBusConfig(MotorsBusConfig):  
+    port: str   
+    motors: dict[str, tuple[int, str]]    
+    mock: bool = False 
