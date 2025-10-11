@@ -37,7 +37,7 @@ from operating_platform.robot.robots.com_configs.motors import (
 )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class RobotConfig(draccus.ChoiceRegistry, abc.ABC):
     @property
     def type(self) -> str:
