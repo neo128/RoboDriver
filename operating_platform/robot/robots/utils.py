@@ -21,6 +21,7 @@ from operating_platform.robot.robots.configs import RobotConfig
 from operating_platform.robot.robots import (  # noqa: F401
     so101_v1,
     galbot_g1,
+    leju_kuavo4p,
 )
 
 def busy_wait(seconds):
@@ -134,6 +135,11 @@ def make_robot_from_config(config: RobotConfig):
         from operating_platform.robot.robots.galbot_g1.manipulator import GalbotG1Manipulator
         print("In GalbotG1RobotConfig")
         return GalbotG1Manipulator(config)
+    
+    elif config.type == "leju_kuavo4p":
+        from operating_platform.robot.robots.leju_kuavo4p.manipulator import LejuKuavo4pManipulator
+        print("In LejuKuavo4pRobotConfig")
+        return LejuKuavo4pManipulator(config)
     
     else:
         print("Not match robot")

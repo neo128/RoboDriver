@@ -1,6 +1,6 @@
 import abc
 from dataclasses import dataclass, field
-from typing import Sequence
+from typing import Sequence, Dict
 
 import draccus
 
@@ -22,7 +22,7 @@ from operating_platform.robot.robots.configs import RobotConfig, ManipulatorRobo
 @RobotConfig.register_subclass("galbot_g1")
 @dataclass
 class GalbotG1RobotConfig(DDSManipulatorRobotConfig):
-    leader_motors: dict[str, MotorsBusConfig] = field(
+    leader_motors: Dict[str, MotorsBusConfig] = field(
         default_factory = lambda: {
             # "right_arm": DDSMotorsBusConfig(
             #     topic="/dev/ttyACM0",
@@ -39,7 +39,7 @@ class GalbotG1RobotConfig(DDSManipulatorRobotConfig):
         }
     )
 
-    follower_motors: dict[str, MotorsBusConfig] = field(
+    follower_motors: Dict[str, MotorsBusConfig] = field(
         default_factory = lambda: {
             "right_arm": DDSMotorsBusConfig(
                 topic="singorix/wbcs/sensor",
@@ -103,7 +103,7 @@ class GalbotG1RobotConfig(DDSManipulatorRobotConfig):
         }
     )
 
-    cameras: dict[str, CameraConfig] = field(
+    cameras: Dict[str, CameraConfig] = field(
         default_factory=lambda: {
             "image_top_right": DDSCameraConfig(
                 topic="/front_head_camera/right_color/image_raw",
@@ -138,7 +138,7 @@ class GalbotG1RobotConfig(DDSManipulatorRobotConfig):
 
     use_videos: bool = False
 
-    microphones: dict[str, int] = field(
+    microphones: Dict[str, int] = field(
         default_factory=lambda: {
             # "audio_right": 2,
             # "audio_left": 4,
