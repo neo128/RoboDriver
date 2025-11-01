@@ -98,7 +98,7 @@ def make_robot_from_config(config: RobotConfig):
         logger.info("In AlohaManipulator")
         return AlohaManipulator(config)
     
-    elif config.type == "pika":
+    elif config.type == "pika_v1":
         from operating_platform.robot.robots.pika_v1.manipulator import PikaV1Manipulator
         logger.info("In PikaV1Manipulator")
         return PikaV1Manipulator(config)
