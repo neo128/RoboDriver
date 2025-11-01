@@ -44,6 +44,7 @@ dependencies = [
     "protobuf==4.21",
     "colorama",
     "scipy",
+    "logging_mp"
 ]
 
 [tool.setuptools.packages.find]
