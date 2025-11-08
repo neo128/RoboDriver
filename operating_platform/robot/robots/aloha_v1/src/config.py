@@ -16,7 +16,7 @@ from operating_platform.robot.robots.com_configs.motors import (
 from operating_platform.robot.robots.configs import RobotConfig
 
 
-@RobotConfig.register_subclass("aloha")
+@RobotConfig.register_subclass("aloha_v1")
 @dataclass
 class AlohaRobotConfig(RobotConfig):
     right_leader_arm = PiperMotorsBusConfig(
