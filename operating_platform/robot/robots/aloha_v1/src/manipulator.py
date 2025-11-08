@@ -540,21 +540,21 @@ class AlohaManipulator:
 
             # action_sent.append(goal_joint)
 
-    def update_status(self) -> str:
+    # def update_status(self) -> str:
 
-        for i in range(self.status.specifications.camera.number):
-            match_name = self.status.specifications.camera.information[i].name
-            for name in recv_images_status:
-                if match_name in name:
-                    self.status.specifications.camera.information[i].is_connect = True if recv_images_status[name]>0 else False
+    #     for i in range(self.status.specifications.camera.number):
+    #         match_name = self.status.specifications.camera.information[i].name
+    #         for name in recv_images_status:
+    #             if match_name in name:
+    #                 self.status.specifications.camera.information[i].is_connect = True if recv_images_status[name]>0 else False
 
-        for i in range(self.status.specifications.arm.number):
-            match_name = self.status.specifications.arm.information[i].name
-            for name in recv_joint_status:
-                if match_name in name:
-                    self.status.specifications.arm.information[i].is_connect = True if recv_joint_status[name]>0 else False
+    #     for i in range(self.status.specifications.arm.number):
+    #         match_name = self.status.specifications.arm.information[i].name
+    #         for name in recv_joint_status:
+    #             if match_name in name:
+    #                 self.status.specifications.arm.information[i].is_connect = True if recv_joint_status[name]>0 else False
 
-        return self.status.to_json()
+    #     return self.status.to_json()
 
     def disconnect(self):
         if not self.is_connected:
