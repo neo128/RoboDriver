@@ -2,9 +2,12 @@ import platform
 import time
 import logging_mp
 
-from typing import Protocol
+# from typing import Protocol
+
+from lerobot.robots import Robot
 
 from operating_platform.robot.robots.configs import RobotConfig
+# from operating_platform.robot.robots.so101_v1_dora import so101_v1_dora
 from operating_platform.robot.robots.statuses import RobotStatus
 from operating_platform.robot.robots import (  # noqa: F401
     so101_v1,
@@ -75,18 +78,18 @@ def get_arm_id(name, arm_type):
     return f"{name}_{arm_type}"
 
 
-class Robot(Protocol):
-    # TODO(rcadene, aliberts): Add unit test checking the protocol is implemented in the corresponding classes
-    robot_type: str
-    features: dict
+# class Robot(Protocol):
+#     # TODO(rcadene, aliberts): Add unit test checking the protocol is implemented in the corresponding classes
+#     robot_type: str
+#     features: dict
 
-    def connect(self): ...
-    def run_calibration(self): ...
-    def teleop_step(self, record_data=False): ...
-    def capture_observation(self): ...
-    def send_action(self, action): ...
-    def disconnect(self): ...
-    def update_status(self): ...  # 声明但无实现
+#     def connect(self): ...
+#     def run_calibration(self): ...
+#     def teleop_step(self, record_data=False): ...
+#     def capture_observation(self): ...
+#     def send_action(self, action): ...
+#     def disconnect(self): ...
+#     def update_status(self): ...  # 声明但无实现
 
 
 def make_robot_from_config(config: RobotConfig):
