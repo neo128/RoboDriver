@@ -17,7 +17,7 @@ from huggingface_hub import HfApi, snapshot_download
 from huggingface_hub.constants import REPOCARD_NAME
 from huggingface_hub.errors import RevisionNotFoundError
 import shutil  # 需要导入shutil模块
-
+import logging_mp
 
 from operating_platform.dataset.compute_stats import aggregate_stats, compute_episode_stats
 from operating_platform.dataset.image_writer import AsyncImageWriter, write_image
@@ -74,6 +74,9 @@ from operating_platform.robot.robots.utils import Robot
 
 LEROBOT_DATASET_VERSION = "v2.1"
 DOROBOT_DATASET_VERSION = "v1.0"
+
+
+logger = logging_mp.get_logger(__name__)
 
 
 class DoRobotDatasetMetadata:
@@ -359,7 +362,6 @@ class DoRobotDatasetMetadata:
         repo_id: str,
         fps: int,
         root: str | Path | None = None,
-        robot: Robot | None = None,
         robot_type: str | None = None,
         features: dict | None = None,
         use_videos: bool = True,
@@ -371,29 +373,30 @@ class DoRobotDatasetMetadata:
         obj.root = Path(root) if root is not None else DOROBOT_DATASET / repo_id
         obj.root.mkdir(parents=True, exist_ok=True)
 
-        if robot is not None:
-            features = get_features_from_robot(robot, use_videos)
-            robot_type = robot.robot_type
-            if not all(cam.fps == fps for cam in robot.cameras.values()):
-                logging.warning(
-                    f"Some cameras in your {robot.robot_type} robot don't have an fps matching the fps of your dataset."
-                    "In this case, frames from lower fps cameras will be repeated to fill in the blanks."
-                )
-        elif features is None:
-            raise ValueError(
-                "Dataset features must either come from a Robot or explicitly passed upon creation."
-            )
-        else:
-            # TODO(aliberts, rcadene): implement sanity check for features
-            features = {**features, **DEFAULT_FEATURES}
+        # if robot is not None:
+        #     features = get_features_from_robot(robot, use_videos)
+        #     robot_type = robot.robot_type
+        #     if not all(cam.fps == fps for cam in robot.cameras.values()):
+        #         logging.warning(
+        #             f"Some cameras in your {robot.robot_type} robot don't have an fps matching the fps of your dataset."
+        #             "In this case, frames from lower fps cameras will be repeated to fill in the blanks."
+        #         )
+        # elif features is None:
+        #     raise ValueError(
+        #         "Dataset features must either come from a Robot or explicitly passed upon creation."
+        #     )
+        # else:
+        #     # TODO(aliberts, rcadene): implement sanity check for features
+        #     features = {**features, **DEFAULT_FEATURES}
 
-            # check if none of the features contains a "/" in their names,
-            # as this would break the dict flattening in the stats computation, which uses '/' as separator
-            for key in features:
-                if "/" in key:
-                    raise ValueError(f"Feature names should not contain '/'. Found '/' in feature '{key}'.")
+        #     # check if none of the features contains a "/" in their names,
+        #     # as this would break the dict flattening in the stats computation, which uses '/' as separator
+        #     for key in features:
+        #         if "/" in key:
+        #             raise ValueError(f"Feature names should not contain '/'. Found '/' in feature '{key}'.")
 
-            features = {**features, **DEFAULT_FEATURES}
+        
+        features = {**features, **DEFAULT_FEATURES}
 
         obj.tasks, obj.task_to_task_index = {}, {}
         obj.episodes_stats, obj.stats, obj.episodes = {}, {}, {}
@@ -558,11 +561,11 @@ class DoRobotDataset(torch.utils.data.Dataset):
 
         self.episode_data_index = get_episode_data_index(self.meta.episodes, self.episodes)
 
-        # Check timestamps
-        timestamps = torch.stack(self.hf_dataset["timestamp"]).numpy()
-        episode_indices = torch.stack(self.hf_dataset["episode_index"]).numpy()
-        ep_data_index_np = {k: t.numpy() for k, t in self.episode_data_index.items()}
-        check_timestamps_sync(timestamps, episode_indices, ep_data_index_np, self.fps, self.tolerance_s)
+        # # Check timestamps
+        # timestamps = torch.stack(self.hf_dataset["timestamp"]).numpy()
+        # episode_indices = torch.stack(self.hf_dataset["episode_index"]).numpy()
+        # ep_data_index_np = {k: t.numpy() for k, t in self.episode_data_index.items()}
+        # check_timestamps_sync(timestamps, episode_indices, ep_data_index_np, self.fps, self.tolerance_s)
 
         # Setup delta_indices
         if self.delta_timestamps is not None:
@@ -871,6 +874,8 @@ class DoRobotDataset(torch.utils.data.Dataset):
             if isinstance(frame[name], torch.Tensor):
                 frame[name] = frame[name].numpy()
 
+        logger.debug(f"Adding frame.keys(): {frame.keys()}")
+        logger.debug(f"self.features.keys(): {self.features.keys()}")
         validate_frame(frame, self.features)
 
         if self.episode_buffer is None:
@@ -1224,7 +1229,7 @@ class DoRobotDataset(torch.utils.data.Dataset):
             repo_id=repo_id,
             fps=fps,
             root=root,
-            robot=robot,
+
             robot_type=robot_type,
             features=features,
             use_videos=use_videos,

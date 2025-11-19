@@ -52,6 +52,22 @@ def get_features_from_robot(robot: Robot, use_videos: bool = True) -> dict:
         }
     return {**robot.motor_features, **camera_ft, **microphone_ft, **DEFAULT_FEATURES}
 
+# def get_features_from_robot_new(robot: Robot, use_videos: bool = True) -> dict:
+#     observation_features = {}
+#     if hasattr(robot, "observation_features"):
+#         observation_features = {
+#             key: {"dtype": "video" if use_videos else "image", **ft}
+#             for key, ft in robot.camera_features.items()
+#         }
+    
+#     microphone_ft = {}
+#     if robot.microphones:
+#         microphone_ft = {
+#             key: {"dtype": "audio", **ft}
+#             for key, ft in robot.microphone_features.items()
+#         }
+#     return {**observation_features, **action_features, **DEFAULT_FEATURES}
+
 def get_safe_version(repo_id: str, version: Union[str, packaging.version.Version]) -> str:
     """
     Returns the version if available on repo or the latest compatible one.

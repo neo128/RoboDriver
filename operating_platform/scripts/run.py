@@ -53,7 +53,7 @@ async def async_main(cfg: ControlPipelineConfig):
     monitor = Monitor(daemon)
     monitor.start()
 
-    coordinator = Coordinator(daemon)
+    coordinator = Coordinator(daemon, teleop)
     await coordinator.start()
 
     coordinator.stream_info(daemon.cameras_info)
@@ -74,11 +74,11 @@ async def async_main(cfg: ControlPipelineConfig):
                 for key in observation:
                     if "image" in key and "depth" not in key:
                         img = cv2.cvtColor(observation[key], cv2.COLOR_RGB2BGR)
-                        name = key[len("observation.images."):]
+                        # name = key[len("observation.images."):]
                         tasks.append(
-                            coordinator.update_stream_async(name, img)
+                            coordinator.update_stream_async(key, img)
                         )
-                        cv2.imshow(name, img)
+                        cv2.imshow(key, img)
                 cv2.waitKey(1)
                 if tasks:
                     try:

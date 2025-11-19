@@ -6,9 +6,10 @@ from deepdiff import DeepDiff
 from dataclasses import dataclass
 
 from operating_platform.robot.robots.configs import RobotConfig
-from operating_platform.robot.robots.utils import Robot, busy_wait, safe_disconnect, make_robot_from_config
+from operating_platform.robot.robots.utils import  busy_wait, safe_disconnect, make_robot_from_config
 
 from operating_platform.dataset.dorobot_dataset import *
+# from operating_platform.dataset.functions import get_features_from_robot_new
 from operating_platform.robot.daemon import Daemon
 from operating_platform.utils import parser
 from operating_platform.utils.utils import has_method, log_say, get_current_git_branch, git_branch_log, get_container_ip_from_hosts
@@ -22,6 +23,15 @@ from operating_platform.utils.data_file import (
     delete_dataid_json,
     validate_session,
 )
+
+from lerobot.robots import Robot
+from lerobot.teleoperators import Teleoperator
+from lerobot.processor import (
+    make_default_processors,
+)
+from lerobot.datasets.utils import build_dataset_frame, combine_feature_dicts
+from lerobot.datasets.pipeline_features import aggregate_pipeline_dataset_features, create_initial_features
+from lerobot.utils.constants import ACTION, OBS_STR
 
 logger = logging_mp.get_logger(__name__)
 
@@ -87,7 +97,7 @@ class RecordConfig():
 
 
 class Record:
-    def __init__(self, fps: int, robot: Robot, daemon: Daemon, record_cfg: RecordConfig, record_cmd: dict):
+    def __init__(self, fps: int, robot: Robot, teleop: Teleoperator, daemon: Daemon, record_cfg: RecordConfig, record_cmd: dict):
         self.robot = robot
         self.daemon = daemon
         self.record_cfg = record_cfg
@@ -100,6 +110,23 @@ class Record:
         self.record_cfg.record_cmd = record_cmd
 
         print(f"in Record init record_cmd: {self.record_cmd}")
+
+        teleop_action_processor, robot_action_processor, robot_observation_processor = make_default_processors()
+
+        dataset_features = combine_feature_dicts(
+            aggregate_pipeline_dataset_features(
+                pipeline=teleop_action_processor,
+                initial_features=create_initial_features(action=teleop.action_features),
+                use_videos=record_cfg.video,
+            ),
+            aggregate_pipeline_dataset_features(
+                pipeline=robot_observation_processor,
+                initial_features=create_initial_features(observation=robot.observation_features),
+                use_videos=record_cfg.video,
+            ),
+        )
+
+        logger.info(f"Dataset features: {dataset_features}")
 
         if self.record_cfg.resume:
             self.dataset = DoRobotDataset(
@@ -122,6 +149,7 @@ class Record:
                 record_cfg.fps,
                 root=record_cfg.root,
                 robot=robot,
+                features=dataset_features,
                 use_videos=record_cfg.video,
                 use_audios=len(robot.microphones) > 0,
                 image_writer_processes=record_cfg.num_image_writer_processes,
@@ -142,8 +170,12 @@ class Record:
 
                 observation = self.daemon.get_observation()
                 action = self.daemon.get_obs_action()
+                if self.dataset is not None:
+                    observation_frame = build_dataset_frame(self.dataset.features, observation, prefix=OBS_STR)
+                    action_frame = build_dataset_frame(self.dataset.features, action, prefix=ACTION)
                 
-                frame = {**observation, **action, "task": self.record_cfg.single_task}
+                
+                frame = {**observation_frame, **action_frame, "task": self.record_cfg.single_task}
                 self.dataset.add_frame(frame)
 
                 dt_s = time.perf_counter() - start_loop_t

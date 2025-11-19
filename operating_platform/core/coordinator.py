@@ -18,19 +18,25 @@ from operating_platform.utils.utils import has_method, log_say, get_current_git_
 from operating_platform.utils.data_file import find_epindex_from_dataid_json, check_disk_space
 from operating_platform.utils.constants import DOROBOT_DATASET, DEFAULT_FPS, RERUN_WEB_PORT, RERUN_WS_PORT
 
+from lerobot.robots import Robot
+from lerobot.teleoperators import Teleoperator
+
 
 logger = logging_mp.get_logger(__name__)
 
 
 class Coordinator:
-    def __init__(self, daemon: Daemon, server_url="http://localhost:8088"):
+    def __init__(self, daemon: Daemon, teleop: Teleoperator,server_url="http://localhost:8088"):
         self.server_url = server_url
         # 异步客户端
         self.sio = socketio.AsyncClient()
         self.session = aiohttp.ClientSession(
             connector=aiohttp.TCPConnector(limit=10, limit_per_host=10)
         )
+
         self.daemon = daemon
+        self.teleop = teleop
+
         self.running = False
         self.last_heartbeat_time = 0
         self.heartbeat_interval = 2
@@ -159,7 +165,7 @@ class Coordinator:
             logger.info(f"Resume mode: {'Enabled' if resume else 'Disabled'}")
 
             record_cfg = RecordConfig(fps=DEFAULT_FPS, single_task=task_name, repo_id=repo_id, video=self.daemon.robot.use_videos, resume=resume, root=target_dir)
-            self.record = Record(fps=DEFAULT_FPS, robot=self.daemon.robot, daemon=self.daemon, record_cfg = record_cfg, record_cmd=msg)
+            self.record = Record(fps=DEFAULT_FPS, robot=self.daemon.robot, daemon=self.daemon, teleop=self.teleop, record_cfg = record_cfg, record_cmd=msg)
             # 发送响应
             await self.send_response('start_collection', "success")
             # 开始采集倒计时
