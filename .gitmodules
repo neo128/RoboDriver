@@ -13,3 +13,6 @@
 [submodule "robodriver/robots/so101_aio_ros2"]
 	path = robodriver/robots/so101_aio_ros2
 	url = https://github.com/BAAI-EI-DATA/robodriver-robot-so101-aio-ros2.git
+[submodule "robodriver/robots/robodriver-robot-franka-aio-dora"]
+	path = robodriver/robots/robodriver-robot-franka-aio-dora
+	url = git@github.com:BAAI-EI-DATA/robodriver-robot-franka-aio-dora.git
