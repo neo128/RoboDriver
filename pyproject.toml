@@ -20,8 +20,7 @@ dependencies = [
 
     "rerun-sdk==0.26.2",
 
-    "python-socketio"
-
+    "python-socketio",
 ]
 
 [tool.setuptools.packages.find]
