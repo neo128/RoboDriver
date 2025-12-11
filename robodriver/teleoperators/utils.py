@@ -10,14 +10,12 @@ logger = logging_mp.get_logger(__name__)
 
 def make_teleoperator_from_config(config: TeleoperatorConfig) -> Teleoperator:
     logger.info("In make_teleoperator_from_config")
-
-    if config.type == "so101_leader":
-        raise ValueError("Teleoperator type is not available.")
-    else:
-        try:
-            return cast(Teleoperator, make_device_from_device_class(config))
-        except Exception as e:
-            logger.critical(f"Can't create teleoperator with config {config}")
-            raise ValueError(
-                f"Error creating teleoperator with config {config}: {e}"
-            ) from e
+    logger.info(f"make teleoperator type: {config.type}")
+    
+    try:
+        return cast(Teleoperator, make_device_from_device_class(config))
+    except Exception as e:
+        logger.critical(f"Can't create teleoperator with config {config}")
+        raise ValueError(
+            f"Error creating teleoperator with config {config}: {e}"
+        ) from e
