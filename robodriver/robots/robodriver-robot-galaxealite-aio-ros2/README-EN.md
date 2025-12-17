@@ -1,9 +1,5 @@
 # robodriver-robot-galaxealite-aio-ros2
 ## Quick Start
-### Prerequisites (Execute first if not completed)
-1. Embodied Platform Application: [https://ei2data.baai.ac.cn/home](https://ei2data.baai.ac.cn/home)
-2. Edge Service Installation: [https://github.com/FlagOpen/RoboDriver-Server.git](https://github.com/FlagOpen/RoboDriver-Server.git)
-
 ### Access Requirements
 #### 1. Hardware Requirements
 Refer to the document: [https://jwolpxeehx.feishu.cn/wiki/LYcNwC2rBirg4Dk9CoScemx3n8f?from=from_copylink](https://jwolpxeehx.feishu.cn/wiki/LYcNwC2rBirg4Dk9CoScemx3n8f?from=from_copylink)
@@ -12,10 +8,15 @@ Refer to the document: [https://jwolpxeehx.feishu.cn/wiki/LYcNwC2rBirg4Dk9CoScem
 - Galaxea teleoperation function is normal;
 - ROS2 (Humble/Iron version) is installed on the host, which can receive galaxea topic data;
 - The host and galaxea main controller are connected to the same local area network (Ethernet connection is recommended);
+- Host is connected to the internet and can access the web normally;
 - Set ROS Domain ID (example):
   ```bash
   export ROS_DOMAIN_ID=1
   ```
+
+### Prerequisites (Execute first if not completed)
+1. Embodied Platform Application: [https://ei2data.baai.ac.cn/home](https://ei2data.baai.ac.cn/home)
+2. Edge Service Installation: [https://github.com/FlagOpen/RoboDriver-Server.git](https://github.com/FlagOpen/RoboDriver-Server.git)
 
 ### Clone Code Repositories
 #### 1. Clone RoboDriver Core Repository (Skip if already cloned)
@@ -23,9 +24,9 @@ Refer to the document: [https://jwolpxeehx.feishu.cn/wiki/LYcNwC2rBirg4Dk9CoScem
 git clone https://github.com/FlagOpen/RoboDriver.git
 ```
 
-#### 2. Clone Galaxea Adaptation Repository
+#### 2. Enter Galaxea ROS2 folder
 ```bash
-git clone https://github.com/BAAI-EI-DATA/robodriver-robot-galaxealite-aio-ros2.git
+cd /path/to/your/RoboDriver/robodriver/robots/robodriver-robot-galaxealite-aio-ros2
 ```
 
 ### Create Miniconda Virtual Environment
@@ -41,17 +42,17 @@ source ~/.bashrc
 
 #### 2. Install Dependencies
 ```bash
-# Create and activate Python 3.10 environment
+# Create and activate Python 3.10 environment (run if environment not created)
 conda create -n robodriver python=3.10 -y
 conda activate robodriver
 
-# Install RoboDriver core dependencies
+# Install RoboDriver core dependencies (run if dependencies not installed)
 cd /path/to/your/RoboDriver  
 pip install -e .
 
 # Install galaxea robot hardware dependencies
-cd /path/to/your/robodriver-robot-galaxealite-aio-ros2
-pip install -e .[hardware]
+cd /path/to/your/RoboDriver/robodriver/robots/robodriver-robot-galaxealite-aio-ros2
+pip install -e .
 ```
 
 ### Configure node.py (Adapt to Robot's Actual Topics)
@@ -192,7 +193,7 @@ After collection is completed, disconnect teleoperation and click the "Playback"
    visual_worker(mode="local")
    ```
 
-2. **OpenCV cvShowImage error on startup**  
+2. **OpenCV cvShowImage error on startup or need to remove image popups on startup**  
    Comment out the following two lines in `robodriver/scripts/run.py`:
    ```python
    # cv2.imshow(key, img)
@@ -202,7 +203,7 @@ After collection is completed, disconnect teleoperation and click the "Playback"
 3. **Cannot access http://localhost:5805/hmi/**  
    Restart the nginx service:
    ```bash
-   sudo systemctl start nginx
+   sudo systemctl restart nginx
    ```
 
 4. **Robot response timeout**  
@@ -246,3 +247,10 @@ TaskName_TaskId/
         ├── observation.images.image_right_tac_r/ # Right tactile right camera
         └── observation.images.image_top/         # Top camera
 ```
+
+## Acknowledgment
+
+- Thanks to LeRobot team 🤗, [LeRobot](https://github.com/huggingface/lerobot).
+- Thanks to dora-rs 🤗, [dora](https://github.com/dora-rs/dora).
+
+## Cite

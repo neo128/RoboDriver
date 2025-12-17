@@ -1,9 +1,5 @@
 # robodriver-robot-galaxealite-aio-ros2
 ## 快速开始
-### 前置准备（未完成需先执行）
-1. 具身平台申请：[https://ei2data.baai.ac.cn/home](https://ei2data.baai.ac.cn/home)
-2. 端侧服务安装：[https://github.com/FlagOpen/RoboDriver-Server.git](https://github.com/FlagOpen/RoboDriver-Server.git)
-
 ### 接入要求
 #### 1. 硬件要求
 参考文档：[https://jwolpxeehx.feishu.cn/wiki/LYcNwC2rBirg4Dk9CoScemx3n8f?from=from_copylink](https://jwolpxeehx.feishu.cn/wiki/LYcNwC2rBirg4Dk9CoScemx3n8f?from=from_copylink)
@@ -12,10 +8,16 @@
 - galaxea 遥操作功能正常；
 - 主机已安装 ROS2（Humble/Iron 版本），可接收 galaxea 话题数据；
 - 主机与 galaxea 主控接入同一局域网（推荐网线直连）；
+- 主机连接网络，可以正常上网；
 - 设置 ROS 域 ID（示例）：
   ```bash
   export ROS_DOMAIN_ID=1
   ```
+
+### 前置准备（未完成需先执行）
+1. 具身平台申请：[https://ei2data.baai.ac.cn/home](https://ei2data.baai.ac.cn/home)
+2. 端侧服务安装：[https://github.com/FlagOpen/RoboDriver-Server.git](https://github.com/FlagOpen/RoboDriver-Server.git)
+
 
 ### 克隆代码仓库
 #### 1. 克隆 RoboDriver 核心仓库（已克隆可跳过）
@@ -23,9 +25,9 @@
 git clone https://github.com/FlagOpen/RoboDriver.git
 ```
 
-#### 2. 克隆 galaxea 适配仓库
+#### 2. 进入 galaxea ros2 文件夹
 ```bash
-git clone https://github.com/BAAI-EI-DATA/robodriver-robot-galaxealite-aio-ros2.git
+git /path/to/your/RoboDriver/robodriver/robots/robodriver-robot-galaxealite-aio-ros2
 ```
 
 ### 创建 Miniconda 虚拟环境
@@ -41,17 +43,17 @@ source ~/.bashrc
 
 #### 2. 安装依赖
 ```bash
-# 创建并激活 Python 3.10 环境
+# 创建并激活 Python 3.10 环境 （未创建环境时运行）
 conda create -n robodriver python=3.10 -y
 conda activate robodriver
 
-# 安装 RoboDriver 核心依赖
+# 安装 RoboDriver 核心依赖 （未安装依赖时运行）
 cd /path/to/your/RoboDriver  
 pip install -e .
 
 # 安装 galaxea 机器人硬件依赖
-cd /path/to/your/robodriver-robot-galaxealite-aio-ros2
-pip install -e .[hardware]
+cd /path/to/your/RoboDriver/robodriver/robots/robodriver-robot-galaxealite-aio-ros2
+pip install -e .
 ```
 
 ### 配置 node.py（适配机器人实际话题）
@@ -192,7 +194,7 @@ python -m robodriver.scripts.run  --robot.type=galaxealite-aio-ros2
    visual_worker(mode="local")
    ```
 
-2. **启动时 OpenCV cvShowImage 错误**  
+2. **启动时 OpenCV cvShowImage 错误 或者 需要删除启动时的图像弹窗**  
    注释 `robodriver/scripts/run.py` 中以下两行：
    ```python
    # cv2.imshow(key, img)
@@ -202,7 +204,7 @@ python -m robodriver.scripts.run  --robot.type=galaxealite-aio-ros2
 3. **无法访问 http://localhost:5805/hmi/**  
    重新启动 nginx 服务：
    ```bash
-   sudo systemctl start nginx
+   sudo systemctl restart nginx
    ```
 
 4. **机器人响应超时**  
