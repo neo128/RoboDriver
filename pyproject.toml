@@ -26,7 +26,9 @@ dependencies = [
 [project.optional-dependencies]
 
 [project.scripts]
-robodriver-run="scripts.run:main"
+robodriver-run="robodriver.scripts.run:main"
 
 [tool.setuptools.packages.find]
-where = ["robodriver"]
+where = ["."]
+include = ["robodriver*"]
+exclude = []
