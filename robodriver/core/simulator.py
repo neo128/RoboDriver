@@ -69,24 +69,10 @@ class Simulator:
             GUI    = False,
         )
 
-        self.jnt_names = [
-            'joint1',
-            'joint2',
-            'joint3',
-            'joint4',
-            'joint5',
-            'joint6',
-            'joint7',
-            'finger_joint1',
-            'finger_joint2',
-        ]
-        dofs_idx = [self.arm.get_joint(name).dof_idx_local for name in self.jnt_names]
-
         self.scene.build()
 
         self.arm.control_dofs_position(
-            np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]),
-            dofs_idx,
+            np.zeros(self.arm.n_dofs),
         )
 
     def update(self, action):
