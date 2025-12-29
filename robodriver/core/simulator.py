@@ -78,10 +78,15 @@ class Simulator:
     def update(self, action):
         goal_joint = [ val for _key, val in action.items()]
 
+        dofs_idx = [self.arm.get_joint(name).dof_idx_local for name in action]
+        print("action:", action)
+        print("dofs_idx:", dofs_idx)
+
         goal_joint_numpy = np.array(goal_joint, dtype=np.float32)
 
         self.arm.control_dofs_position(
             goal_joint_numpy,
+            dofs_idx,
         )
 
         self.scene.step()
