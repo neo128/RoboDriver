@@ -51,8 +51,8 @@ def main():
             if "action" in event["id"]:
                 enable_fun(piper)
             if event["id"] == "action_joint":
-                # Do not push to many commands to fast. Limiting it to 30Hz
-                if time.time() - elapsed_time > 0.03:
+                # Do not push to many commands to fast. Limiting it to 50Hz
+                if time.time() - elapsed_time > 0.02:
                     elapsed_time = time.time()
                 else:
                     continue
@@ -74,8 +74,8 @@ def main():
                     piper.GripperCtrl(int(abs(position[6] * 1000 * 100)), 1000, 0x01, 0)
 
             elif event["id"] == "action_endpose":
-                # Do not push to many commands to fast. Limiting it to 30Hz
-                if time.time() - elapsed_time > 0.03:
+                # Do not push to many commands to fast. Limiting it to 50Hz
+                if time.time() - elapsed_time > 0.02:
                     elapsed_time = time.time()
                 else:
                     continue
@@ -93,8 +93,8 @@ def main():
                 # piper.MotionCtrl_2(0x01, 0x01, 50, 0x00)
             
             elif event["id"] == "action_gripper":
-                # Do not push to many commands to fast. Limiting it to 30Hz
-                if time.time() - elapsed_time > 0.03:
+                # Do not push to many commands to fast. Limiting it to 50Hz
+                if time.time() - elapsed_time > 0.02:
                     elapsed_time = time.time()
                 else:
                     continue
@@ -119,7 +119,7 @@ def main():
                 gripper = piper.GetArmGripperMsgs()
                 joint_value += [gripper.gripper_state.grippers_angle / 1000 / 100]
 
-                node.send_output("slave_jointstate", pa.array(joint_value, type=pa.float32()))
+                node.send_output("follower_jointstate", pa.array(joint_value, type=pa.float32()))
 
                 position = piper.GetArmEndPoseMsgs()
                 position_value = []
@@ -130,7 +130,7 @@ def main():
                 position_value += [position.end_pose.RY_axis * 0.001 / 360 * 2 * np.pi]
                 position_value += [position.end_pose.RZ_axis * 0.001 / 360 * 2 * np.pi]
 
-                node.send_output("slave_endpose", pa.array(position_value, type=pa.float32()))
+                node.send_output("follower_endpose", pa.array(position_value, type=pa.float32()))
 
                 # Master Arm
                 joint = piper.GetArmJointCtrl()
@@ -146,7 +146,7 @@ def main():
                 gripper = piper.GetArmGripperCtrl()
                 joint_value += [gripper.gripper_ctrl.grippers_angle / 1000 / 100]
 
-                node.send_output("master_jointstate", pa.array(joint_value, type=pa.float32()))
+                node.send_output("leader_jointstate", pa.array(joint_value, type=pa.float32()))
 
         elif event["type"] == "STOP":
             break
