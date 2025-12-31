@@ -165,7 +165,7 @@ def main():
         color_profile: VideoStreamProfile = profile_list.get_video_stream_profile(
             640,
             480,
-            OBFormat.RGB,
+            OBFormat.MJPG,
             30,
         )
     except OBError as e:
@@ -203,15 +203,17 @@ def main():
             color_frame = frames.get_color_frame()
             if color_frame is None:
                 continue
+
             # convert to RGB format
             color_image = frame_to_bgr_image(color_frame)
             if color_image is None:
                 print("failed to convert frame to image")
                 continue
-            # Send Color Image
-            ret, frame = cv2.imencode("." + "jpeg", color_image)
-            if ret:
-                node.send_output("image", pa.array(frame), {"encoding": "jpeg", "width": int(640), "height": int(480)})
+            
+            # # Send Color Image
+            # ret, frame = cv2.imencode("." + "jpeg", color_image)
+            # if ret:
+            node.send_output("image", pa.array(color_image.ravel()), {"encoding": "bgr8", "width": int(640), "height": int(480)})
 
             # Get Depth data
             depth_frame = frames.get_depth_frame()
