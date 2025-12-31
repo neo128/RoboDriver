@@ -4,9 +4,9 @@ nodes:
     inputs:
       tick: dora/timer/millis/33
     outputs:
-      - master_jointstate
-      - slave_endpose
-      - slave_jointstate
+      - leader_jointstate
+      - follower_jointstate
+      - follower_endpose
     env:
       CAN_BUS: can_right
 
@@ -15,14 +15,14 @@ nodes:
     inputs:
       tick: dora/timer/millis/33
     outputs:
-      - master_jointstate
-      - slave_endpose
-      - slave_jointstate
+      - leader_jointstate
+      - follower_jointstate
+      - follower_endpose
     env:
       CAN_BUS: can_left
 
   - id: read_data
     path: ../dora_arm_piper/read_data.py
     inputs:
-      slave_jointstate_piper_left: piper_left/slave_jointstate
-      slave_jointstate_piper_right: piper_right/slave_jointstate
+      follower_jointstate_piper_left: piper_left/follower_jointstate
+      follower_jointstate_piper_right: piper_right/follower_jointstate

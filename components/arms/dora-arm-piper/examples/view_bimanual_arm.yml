@@ -3,9 +3,9 @@ nodes:
     # build: pip install dora-piper
     path: ../dora_arm_piper/main.py
     inputs:
-      tick: dora/timer/millis/40
+      tick: dora/timer/millis/33
     outputs:
-      - slave_jointstate
+      - follower_jointstate
     env:
       CAN_BUS: can_left
       TEACH_MODE: True
@@ -14,9 +14,9 @@ nodes:
     # build: pip install dora-piper
     path: ../dora_arm_piper/main.py
     inputs:
-      tick: dora/timer/millis/40
+      tick: dora/timer/millis/33
     outputs:
-      - slave_jointstate
+      - follower_jointstate
     env:
       CAN_BUS: can_right
       TEACH_MODE: True
