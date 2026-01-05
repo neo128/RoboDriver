@@ -25,3 +25,8 @@ dependencies = [
 
 [project.scripts]
 dora-arm-so101 = "dora_arm_so101.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dora_arm_so101"]
+exclude = []

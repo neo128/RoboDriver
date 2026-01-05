@@ -144,7 +144,7 @@ class Coordinator:
             dataset_path = DOROBOT_DATASET
 
             git_branch_name = get_current_git_branch()
-            if "release" in git_branch_name:
+            if "release" or "main" in git_branch_name:
                 target_dir = dataset_path / date_str / "user" / task_dir / repo_id
             elif "dev" in git_branch_name:
                 target_dir = dataset_path / date_str / "dev" / task_dir / repo_id
@@ -283,7 +283,7 @@ class Coordinator:
             # 构建目标目录路径
             dataset_path = DOROBOT_DATASET
             git_branch_name = get_current_git_branch()
-            if "release" in git_branch_name:
+            if "release" or "main" in git_branch_name:
                 target_dir = dataset_path / date_str / "user" / task_dir / repo_id
             elif "dev" in git_branch_name:
                 target_dir = dataset_path / date_str / "dev" / task_dir / repo_id
@@ -398,6 +398,22 @@ class Coordinator:
     def stream_info(self, info: Dict[str, int]):
         self.cameras = info.copy()
         logger.info(f"更新摄像头信息: {self.cameras}")
+
+    def stream_info_add(self, camera_name: str, camera_id: int):
+        """添加或更新单个摄像头的流信息
+        
+        Args:
+            camera_name: 摄像头名字
+            camera_id: 摄像头编号
+        """
+        if not hasattr(self, 'cameras'):
+            self.cameras = {}
+        
+        self.cameras[camera_name] = camera_id
+        logger.info(f"添加摄像头 {camera_name} 编号: {camera_id}")
+        
+        # 可选：返回更新后的总流数
+        return sum(self.cameras.values())
 
     async def update_stream_info_to_server(self):
         stream_info_data = cameras_to_stream_json(self.cameras)

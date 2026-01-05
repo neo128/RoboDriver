@@ -1,0 +1,28 @@
+nodes:
+  - id: piper_right
+    path: ../dora_arm_piper/main.py
+    inputs:
+      tick: dora/timer/millis/33
+    outputs:
+      - leader_jointstate
+      - follower_jointstate
+      - follower_endpose
+    env:
+      CAN_BUS: can_right
+
+  - id: piper_left
+    path: ../dora_arm_piper/main.py
+    inputs:
+      tick: dora/timer/millis/33
+    outputs:
+      - leader_jointstate
+      - follower_jointstate
+      - follower_endpose
+    env:
+      CAN_BUS: can_left
+
+  - id: read_data
+    path: ../dora_arm_piper/read_data.py
+    inputs:
+      follower_jointstate_piper_left: piper_left/follower_jointstate
+      follower_jointstate_piper_right: piper_right/follower_jointstate
